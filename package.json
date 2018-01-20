@@ -1,0 +1,17 @@
+{
+  "name": "synapsis",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "amp": "0.3.1",
+    "amp-message": "0.1.1",
+    "debug": "*",
+    "discovery-swarm": "*"
+  },
+  "author": "",
+  "license": "ISC"
+}
