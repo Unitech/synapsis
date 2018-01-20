@@ -24,7 +24,7 @@ synapse.router('command:restart', () => {
   console.log('Got Restart');
 });
 
-synapse.router('command:sync_db, (new_db, reply) => {
+synapse.router('command:sync_db', (new_db, reply) => {
   fs.writeFile('current_db.json', new_db, (err) => {
      if (err)
        return reply(err);
@@ -63,4 +63,3 @@ synapse.on('ready', function() {
 ## License
 
 MIT
-# synapsis
