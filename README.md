@@ -12,7 +12,7 @@ var Synapsis = require('synapsis');
 var synapse = new Synapsis({
   namespace: 'namespace-name',
   password: '123456',
-  // Current identity will be shared to all peers (accessible via router.identity bellow)
+  // Identity will be shared to all peers
   identity: {
     name : 'dashboard1',
     hostname : process.env.HOSTNAME
@@ -44,7 +44,6 @@ synapse.on('peer:disconnected', function(err) {
 synapse.on('error', function(err) {
   console.error(err);
 });
-
 
 synapse.on('ready', function() {
   // Broadcast a message to all nodes (w/o current) and do not wait for response
