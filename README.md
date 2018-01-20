@@ -54,7 +54,7 @@ synapse.on('ready', function() {
   synapse.broadcast('command:restart', { some : 'data' });
 
   // Broadcast a message to all nodes (w/o current) and receive messages from each (RPC like)
-  synapse.broadcast('command:sync_db, { my : { db : true } }, function(err, response) {
+  synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, response) {
     console.log(err, response);
   });
 });
