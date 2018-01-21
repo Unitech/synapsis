@@ -4,6 +4,8 @@
 Inter connect local machines together with a Express like socket router.
 Data transfer is cipphered with Diffie Hellman algorithm (dynamic public / private key exchange between peers based on a shared password).
 
+![http://inkican.com/wp-content/uploads/2016/11/67300035-mesh-wallpapers-1-1024x576.jpg](http://inkican.com/wp-content/uploads/2016/11/67300035-mesh-wallpapers-1-1024x576.jpg)
+
 ## Usage
 
 ### Instanciate Peer
