@@ -26,7 +26,7 @@ SocketPool.prototype.add = function(opts) {
   let socket = opts.socket;
   let password = opts.password;
   let local_identity = opts.local_identity;
-  let peer = securesocketrouter(socket);
+  let peer = new securesocketrouter(socket);
 
   socket.on('error', (err) => {
     if (this._socket_pool[peer.id] && this._socket_pool[peer.id].identity)

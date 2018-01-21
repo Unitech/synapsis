@@ -23,6 +23,7 @@ class Synapsis extends EventEmitter {
           'discovery1.publicbits.org',
           'discovery2.publicbits.org'
         ],
+        multicast: true,
         interval : 1000
       },
       dht : false

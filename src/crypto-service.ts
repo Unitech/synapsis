@@ -4,6 +4,12 @@
 
 var crypto = require('crypto');
 
+interface Wrapper {
+  prime : string,
+  publicKey : string,
+  computeSecret : Function
+}
+
 /*
  * encrypts a message and signs it with HMAC
  * @param msg {Object}: the message to be secured
@@ -54,13 +60,13 @@ function verify(msg, key) {
 /*
  * returns a wrapper over crypto.DiffieHellman
  * @param prime {String}: a prime number to initialize with (optional)
- * @return {Object}
+ * @return {Wrapper}
  */
-function diffieHellman(prime) {
+function diffieHellman(prime: string): Wrapper {
   var dhObj = null;
-  var wrapper = {};
+  let wrapper: Wrapper = {};
 
-  if(!!prime)
+  if (!!prime)
     dhObj = crypto.createDiffieHellman(prime, 'base64');
   else
     dhObj = crypto.createDiffieHellman(64);

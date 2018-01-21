@@ -2,9 +2,14 @@
   "name": "synapsis",
   "version": "0.2.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "release": "standard-version",
     "test": "./node_modules/.bin/mocha test/*.mocha.js --exit"
+  },
+  "typings": "definitions/index",
+  "typescript": {
+    "definition": "definitions/index"
   },
   "dependencies": {
     "amp": "0.3.1",
@@ -13,7 +18,16 @@
     "discovery-swarm": "*"
   },
   "devDependencies": {
-    "mocha": "*"
+    "gulp": "*",
+    "gulp-clean": "*",
+    "gulp-typescript": "*",
+    "merge2": "*",
+    "mocha": "*",
+    "run-sequence": "*",
+    "standard-version": "^4.3.0",
+    "typescript": "^2.6.2",
+    "@types/es6-shim": "^0.31.32",
+    "@types/node": "~6.0.46"
   },
   "repository": {
     "type": "git",

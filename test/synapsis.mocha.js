@@ -1,5 +1,5 @@
 
-var Synapsis = require('..');
+var Synapsis = require('../dist');
 var Plan = require('./plan.js');
 var assert = require('assert');
 var EventEmitter = require('events').EventEmitter;
@@ -18,7 +18,7 @@ function mountRoutes(router) {
 }
 
 describe('Synapsis', function() {
-  this.timeout(6000);
+  this.timeout(4000);
   var p1, p2, p3;
 
   after(function() {
