@@ -6,6 +6,8 @@ Data transfer is cipphered with Diffie Hellman algorithm (dynamic public / priva
 
 ## Usage
 
+### Instanciate Peer
+
 Instanciate new peer:
 
 ```javascript
@@ -22,7 +24,9 @@ var synapse = new Synapsis({
 });
 ```
 
-Now expose actions that can be triggered by other peers:
+### Expose Socket Routes
+
+Now expose socket routes that can be triggered by other peers:
 
 ```javascript
 synapse.router('command:restart', () => {
@@ -37,6 +41,8 @@ synapse.router('command:sync_db', (new_db, reply) => {
   });
 });
 ```
+
+### Send/Broadcast Actions to Peers
 
 To send actions to other peers:
 
@@ -53,12 +59,19 @@ synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, respo
 });
 ```
 
-Extra:
+Or send to a specific peer:
 
 ```javascript
-// Events
-synapse.on('peer:connected', function(socket) {
-  console.log('New peer detected', socket.identity);
+var peer = synapse.getPeers()[0];
+
+synapse.send(peer.id, 'command:restart');
+```
+
+### Event Handling
+
+```javascript
+synapse.on('peer:connected', function(identity, socket) {
+  console.log('New peer detected', identity);
 });
 
 synapse.on('peer:disconnected', function(identity) {
@@ -73,6 +86,10 @@ synapse.on('ready', function() {
   // Ready
 });
 ```
+
+## Test
+
+Checkout test/ folder for more examples/
 
 ## License
 
