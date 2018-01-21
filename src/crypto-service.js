@@ -3,6 +3,9 @@
  */
 
 var crypto = require('crypto');
+const IV = new Buffer(crypto.randomBytes(12)).toString('hex').slice(0, 16);
+const ALGO = 'aes-128-cbc';
+//'aes-256-ctr'
 
 /*
  * encrypts a message and signs it with HMAC
@@ -11,7 +14,7 @@ var crypto = require('crypto');
  * @return {Object}: the secured message
  */
 function secure(msg, key) {
-  var cipher = crypto.createCipher('aes-256-ctr', key);
+  var cipher = crypto.createCipheriv(ALGO, key, IV);
   var hmac = crypto.createHmac('sha256', key);
   var plaintext = (typeof msg === "object") ? JSON.stringify(msg) : msg.toString();
 
@@ -35,7 +38,7 @@ function verify(msg, key) {
   var mac = hmac.digest('base64');
 
   if(mac === msg.mac) {
-    var decipher = crypto.createDecipher('aes-256-ctr', key);
+    var decipher = crypto.createDecipheriv(ALGO, key, IV);
     var plaintext = decipher.update(msg.payload, 'base64', 'utf8') + decipher.final('utf8');
 
     // attempt to parse as json
@@ -69,7 +72,7 @@ function diffieHellman(prime) {
   wrapper.publicKey = dhObj.generateKeys('base64');
 
   wrapper.computeSecret = function(remotePublicKey) {
-    return dhObj.computeSecret(remotePublicKey.toString(), 'base64', 'base64');
+    return dhObj.computeSecret(remotePublicKey.toString(), 'base64', 'hex');
   };
 
   return wrapper;
