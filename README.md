@@ -20,10 +20,12 @@ var synapse = new Synapsis({
   password: '123456',
   // Identity will be shared to all peers
   identity: {
-    name : 'dashboard1',
-    hostname : process.env.HOSTNAME
+    name : require('os').hostname()
   }
 });
+
+// Now start the peer
+synapse.start();
 ```
 
 ### Expose Socket Routes
@@ -85,7 +87,7 @@ synapse.on('error', function(err) {
 });
 
 synapse.on('ready', function() {
-  // Ready
+  console.log('Peer Ready');
 });
 ```
 
