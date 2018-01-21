@@ -17,7 +17,7 @@ var Synapsis = require('synapsis');
 
 var synapse = new Synapsis({
   namespace: 'namespace-name',
-  password: '123456',
+  password: 'long-password-16-random-caracters-recommended',
   // Identity will be shared to all peers
   identity: {
     name : require('os').hostname()
@@ -58,8 +58,8 @@ synapse.broadcast('command:restart');
 synapse.broadcast('command:restart', { some : 'data' });
 
 // Broadcast a message to all nodes (w/o current) and receive messages from each (RPC like)
-synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, response) {
-  console.log(err, response);
+synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, response, identity) {
+  console.log(`Err= ${err} Response = ${response} from = ${identity.name}`);
 });
 ```
 
