@@ -154,4 +154,13 @@ describe('Synapsis', function() {
     p3.stop();
   });
 
+  it('should send lot of data and check that everything is good', function(done) {
+    var length = 999999;
+    var buffer = Buffer(length).fill('A');
+
+    p1.broadcast('getInfo', { db : buffer }, function(err, data) {
+      done();
+    });
+  });
+
 });
