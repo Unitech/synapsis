@@ -182,11 +182,11 @@ SocketPool.prototype.getAll = function() {
 
 SocketPool.prototype.sendToId = function(id, route, data, cb) {
   if (data)
-    return this._socket_pool[id].send(route, data, function(err, data) {
+    return this._socket_pool[id].send(route, data, (err, data) => {
       return cb(err, data, this._socket_pool[id].identity);
     });
 
-  return this._socket_pool[id].send(route, function(err, data) {
+  return this._socket_pool[id].send(route, (err, data) => {
     return cb(err, data, this._socket_pool[id].identity);
   });
 };
