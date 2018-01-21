@@ -6,6 +6,8 @@ Data transfer is cipphered with Diffie Hellman algorithm (dynamic public / priva
 
 ## Usage
 
+Instanciate new peer:
+
 ```javascript
 var Synapsis = require('synapsis');
 
@@ -18,8 +20,11 @@ var synapse = new Synapsis({
     hostname : process.env.HOSTNAME
   }
 });
+```
 
-// Router
+Now expose actions that can be triggered by other peers:
+
+```javascript
 synapse.router('command:restart', () => {
   console.log('Got Restart');
 });
@@ -31,14 +36,33 @@ synapse.router('command:sync_db', (new_db, reply) => {
      reply(null, 'DB Synced');
   });
 });
+```
 
+To send actions to other peers:
+
+```javascript
+// Broadcast a message to all nodes (w/o current) and do not wait for response
+synapse.broadcast('command:restart');
+
+// Broadcast a message + data to all nodes (w/o current) and do not wait for response
+synapse.broadcast('command:restart', { some : 'data' });
+
+// Broadcast a message to all nodes (w/o current) and receive messages from each (RPC like)
+synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, response) {
+  console.log(err, response);
+});
+```
+
+Extra:
+
+```javascript
 // Events
 synapse.on('peer:connected', function(socket) {
   console.log('New peer detected', socket.identity);
 });
 
-synapse.on('peer:disconnected', function(err) {
-  console.error(err);
+synapse.on('peer:disconnected', function(identity) {
+  console.error(identity);
 });
 
 synapse.on('error', function(err) {
@@ -46,16 +70,7 @@ synapse.on('error', function(err) {
 });
 
 synapse.on('ready', function() {
-  // Broadcast a message to all nodes (w/o current) and do not wait for response
-  synapse.broadcast('command:restart');
-
-  // Broadcast a message + data to all nodes (w/o current) and do not wait for response
-  synapse.broadcast('command:restart', { some : 'data' });
-
-  // Broadcast a message to all nodes (w/o current) and receive messages from each (RPC like)
-  synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, response) {
-    console.log(err, response);
-  });
+  // Ready
 });
 ```
 

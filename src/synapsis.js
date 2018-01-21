@@ -4,7 +4,7 @@ const Swarm  = require('discovery-swarm');
 const SocketPool = require('./socket-pool.js');
 const os = require('os');
 
-class NetMsg extends EventEmitter {
+class Synapsis extends EventEmitter {
   constructor(opts) {
     super();
 
@@ -29,6 +29,9 @@ class NetMsg extends EventEmitter {
     });
   }
 
+  /**
+   * When exposing a route via .router('route_name', function() {})
+   */
   router(event_name, cb) {
     this._routes_v2[event_name] = cb;
   }
@@ -64,12 +67,11 @@ class NetMsg extends EventEmitter {
           password       : this.password
         })
         .then(router => {
-          this.emit('peer:connected', router);
+          this.emit('peer:connected', router.identity, router);
 
           if (this.routes)
             this.routes(router);
           this.bindRouter(router);
-
         })
         .catch(e => {
           this.emit('rejected', e);
@@ -77,27 +79,31 @@ class NetMsg extends EventEmitter {
         });
     });
 
-    return new Promise((resolve, reject) => {
-      this.command_swarm.on('error', (e) => {
-        this.emit('error', e);
-        reject(e);
-      });
+    this.socket_pool.on('disconnected', (identity) => {
+      this.emit('peer:disconnected', identity);
+    });
 
-      this.command_swarm.on('listening', () => {
-        let port = this.command_swarm._tcp.address().port;
-        this.emit('ready');
-        resolve();
-      });
+    this.command_swarm.on('error', (e) => {
+      this.emit('error', e);
+    });
+
+    this.command_swarm.on('listening', () => {
+      let port = this.command_swarm._tcp.address().port;
+      this.emit('ready');
     });
   }
 
-  mountActions(router) {
-    router.on('ping', (cb) => {
-      console.log('Received a PING');
-      //return cb(null, 'pong');
-    });
-  };
+  broadcast(route, data, cb) {
+    return this.socket_pool.broadcast.apply(this.socket_pool, arguments);
+  }
 
+  getPeers() {
+    return this.socket_pool.getAll()
+  }
+
+  send() {
+    return this.socket_pool.sendToId.apply(this.socket_pool, arguments);
+  }
 }
 
-module.exports = NetMsg;
+module.exports = Synapsis;

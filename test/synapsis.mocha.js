@@ -1,5 +1,5 @@
 
-var Netmsg = require('..');
+var Synapsis = require('..');
 var Plan = require('./plan.js');
 var assert = require('assert');
 var EventEmitter = require('events').EventEmitter;
@@ -17,7 +17,7 @@ function mountRoutes(router) {
   });
 }
 
-describe('NetMsg', function() {
+describe('Synapsis', function() {
   this.timeout(6000);
   var p1, p2, p3;
 
@@ -27,7 +27,7 @@ describe('NetMsg', function() {
   });
 
   it('should instanciate first peer', function(done) {
-    p1 = new Netmsg({
+    p1 = new Synapsis({
       namespace : 'test',
       password : '123456',
       identity : {
@@ -49,7 +49,7 @@ describe('NetMsg', function() {
   });
 
   it('should instanciate second peer and detect', function(done) {
-    p2 = new Netmsg({
+    p2 = new Synapsis({
       namespace : 'test',
       password : '123456',
       identity : {
@@ -66,7 +66,7 @@ describe('NetMsg', function() {
   });
 
   it('should instanciate a unauthorized peer and not be accepted by others', function(done) {
-    p3 = new Netmsg({
+    p3 = new Synapsis({
       namespace : 'test',
       password : 'WRONG-PASSWORD',
       identity : {
@@ -87,7 +87,7 @@ describe('NetMsg', function() {
   it('should p3 now get authorized', function(done) {
     var plan = new Plan(3, done);
 
-    p3 = new Netmsg({
+    p3 = new Synapsis({
       namespace : 'test',
       password : '123456',
       identity : {
@@ -96,13 +96,13 @@ describe('NetMsg', function() {
       routes: mountRoutes
     });
 
-    p1.once('peer:connected', function(data) {
-      assert.equal(data.identity.name, 'dashboard3');
+    p1.once('peer:connected', function(identity) {
+      assert.equal(identity.name, 'dashboard3');
       plan.ok(true);
     });
 
-    p2.once('peer:connected', function(data) {
-      assert.equal(data.identity.name, 'dashboard3');
+    p2.once('peer:connected', function(identity) {
+      assert.equal(identity.name, 'dashboard3');
       plan.ok(true);
     });
 
@@ -117,7 +117,7 @@ describe('NetMsg', function() {
   it('should p1 broadcast to p2 and p3', function(done) {
     var plan = new Plan(2, done);
 
-    p1.socket_pool.broadcast('ping');
+    p1.broadcast('ping');
 
     // hack to verify that peers received a message
     emitter.on('ping', function(data) {
@@ -128,9 +128,30 @@ describe('NetMsg', function() {
   it('should p1 broadcast to p2 and p3', function(done) {
     var plan = new Plan(2, done);
 
-    p2.socket_pool.broadcast('getInfo', { data : true }, function(data) {
+    p2.broadcast('getInfo', { data : true }, function(err, data) {
       plan.ok(true);
     });
+  });
+
+  it('should get socket list', function() {
+    assert.equal(p1.getPeers().length, 2);
+  });
+
+  it('should send getInfo to only one peer', function(done) {
+    var id = p1.getPeers()[0].id;
+
+    p1.send(id, 'getInfo', {data : true}, function(err, data) {
+      done();
+    });
+  });
+
+  it('should catch disconnect event when peer leaves', function(done) {
+    p1.once('peer:disconnected', function(peer) {
+      assert.equal(peer.name, 'dashboard3');
+      done()
+    });
+
+    p3.stop();
   });
 
 });

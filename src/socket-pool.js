@@ -14,7 +14,7 @@ SocketPool.prototype.__proto__ = EventEmitter.prototype;
 /**
  * Add Socket to Socket Pool
  * 1/ Exchange diffie hellman keys
- * 2/ TODO: Send password
+ * 2/ Send password
  * 3/ Send Identity
  *
  * @param {Object} socket net socket
@@ -30,20 +30,19 @@ SocketPool.prototype.add = function(opts) {
 
   socket.on('error', (err) => {
     if (this._socket_pool[peer.id] && this._socket_pool[peer.id].identity)
-      debug('peer %s errored', this._socket_pool[peer.id].identity.public_ip);
+      debug('peer %s errored', this._socket_pool[peer.id].identity.name);
     socket.destroy();
     //this.emit('error', err);
     delete this._socket_pool[peer.id];
   });
 
   socket.on('close', () => {
-    if (this._socket_pool[peer.id] && this._socket_pool[peer.id].identity)
-      debug('peer %s left', this._socket_pool[peer.id].identity.public_ip);
+    if (this._socket_pool[peer.id] && this._socket_pool[peer.id].identity) {
+      debug('peer %s left', this._socket_pool[peer.id].identity.name);
+      this.emit('disconnected', this._socket_pool[peer.id].identity);
+    }
+
     socket.destroy();
-
-    if (this._socket_pool[peer.id] && this._socket_pool[peer.id].identity)
-      this.emit('disconnected', JSON.parse(JSON.stringify(this._socket_pool[peer.id].identity)));
-
     delete this._socket_pool[peer.id];
   });
 
@@ -181,15 +180,10 @@ SocketPool.prototype.getAll = function() {
   return ret;
 };
 
-SocketPool.prototype.sendToId = function(id) {
-  var ret = [];
-  var that = this;
-
-  Object.keys(this._socket_pool).forEach(function(key) {
-    ret.push(that._socket_pool[key]);
-  });
-
-  return ret;
+SocketPool.prototype.sendToId = function(id, route, data, cb) {
+  if (data)
+    return this._socket_pool[id].send(route, data, cb);
+  return this._socket_pool[id].send(route, cb);
 };
 
 SocketPool.prototype.broadcast = function(route, data, cb) {

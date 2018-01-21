@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha test/*.mocha.js --exit"
   },
   "dependencies": {
     "amp": "0.3.1",
@@ -12,6 +12,13 @@
     "debug": "*",
     "discovery-swarm": "*"
   },
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Unitech/synapsis.git"
+  },
+  "author": "Alexandre Strzelewicz @Unitech",
+  "license": "MIT"
 }
