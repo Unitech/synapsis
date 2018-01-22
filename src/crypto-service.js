@@ -11,14 +11,14 @@ var crypto = require('crypto');
  * @return {Object}: the secured message
  */
 function secure(msg, key) {
-  var cipher = crypto.createCipher('aes-256-ctr', key);
+  var cipher = crypto.createCipheriv('aes-128-cbc', key, 'abcdefghiquejrkt');
   var hmac = crypto.createHmac('sha256', key);
   var plaintext = (typeof msg === "object") ? JSON.stringify(msg) : msg.toString();
 
-  var ciphertext = cipher.update(plaintext, 'utf8', 'base64') + cipher.final('base64');
+  var ciphertext = cipher.update(plaintext, 'utf8', 'hex') + cipher.final('hex');
 
   hmac.update(ciphertext);
-  var mac = hmac.digest('base64');
+  var mac = hmac.digest('hex');
 
   return {payload: ciphertext, mac: mac};
 }
@@ -32,11 +32,11 @@ function verify(msg, key) {
   var hmac = crypto.createHmac('sha256', key);
 
   hmac.update(msg.payload);
-  var mac = hmac.digest('base64');
+  var mac = hmac.digest('hex');
 
   if(mac === msg.mac) {
-    var decipher = crypto.createDecipher('aes-256-ctr', key);
-    var plaintext = decipher.update(msg.payload, 'base64', 'utf8') + decipher.final('utf8');
+    var decipher = crypto.createDecipheriv('aes-128-cbc', key, 'abcdefghiquejrkt');
+    var plaintext = decipher.update(msg.payload, 'hex', 'utf8') + decipher.final('utf8');
 
     // attempt to parse as json
     try {
@@ -66,10 +66,10 @@ function diffieHellman(prime) {
     dhObj = crypto.createDiffieHellman(64);
 
   wrapper.prime = dhObj.getPrime('base64');
-  wrapper.publicKey = dhObj.generateKeys('base64');
+  wrapper.publicKey = dhObj.generateKeys('hex');
 
   wrapper.computeSecret = function(remotePublicKey) {
-    return dhObj.computeSecret(remotePublicKey.toString(), 'base64', 'base64');
+    return dhObj.computeSecret(remotePublicKey.toString(), 'hex', 'hex');
   };
 
   return wrapper;
