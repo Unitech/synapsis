@@ -2,7 +2,10 @@
  * Inspired by https://github.com/Mostafa-Samir/klyng/
  */
 
-var crypto = require('crypto');
+const crypto = require('crypto');
+//const IV = new Buffer(crypto.randomBytes(12)).toString('hex').slice(0, 16);
+const IV = 'abcdefghiquejrkt';
+const ALGO = 'aes-128-cbc';
 
 /*
  * encrypts a message and signs it with HMAC
@@ -11,7 +14,7 @@ var crypto = require('crypto');
  * @return {Object}: the secured message
  */
 function secure(msg, key) {
-  var cipher = crypto.createCipheriv('aes-128-cbc', key, 'abcdefghiquejrkt');
+  var cipher = crypto.createCipheriv(ALGO, key, IV);
   var hmac = crypto.createHmac('sha256', key);
   var plaintext = (typeof msg === "object") ? JSON.stringify(msg) : msg.toString();
 
@@ -35,7 +38,7 @@ function verify(msg, key) {
   var mac = hmac.digest('hex');
 
   if(mac === msg.mac) {
-    var decipher = crypto.createDecipheriv('aes-128-cbc', key, 'abcdefghiquejrkt');
+    var decipher = crypto.createDecipheriv(ALGO, key, IV);
     var plaintext = decipher.update(msg.payload, 'hex', 'utf8') + decipher.final('utf8');
 
     // attempt to parse as json
