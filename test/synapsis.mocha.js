@@ -86,10 +86,20 @@ describe('Synapsis', function() {
 
     p3.start();
 
-    p1.once('rejected', function() {
+    var rem= function() {
+      if (t) clearTimeout(t);
       p3.stop();
       done();
-    });
+    }
+
+    var t = setTimeout(function() {
+      t = null;
+      p3.stop();
+      done();
+      p1.removeListener('rejected', rem);
+    }, 3000);
+
+    p1.once('rejected', rem);
   });
 
 
