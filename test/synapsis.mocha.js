@@ -15,6 +15,11 @@ function mountRoutes(router) {
   router.on('getInfo', function(data, cb) {
     return cb(null, data);
   });
+
+  // With callback
+  router.on('getInfoNoParam', function(cb) {
+    return cb(null, {success:true});
+  });
 }
 
 describe('Synapsis', function() {
@@ -43,6 +48,10 @@ describe('Synapsis', function() {
 
     p1.router('getInfo', function(data, reply) {
       return reply(null, data);
+    });
+
+    p1.router('getInfoNoParam', function(reply) {
+      return reply(null, {success:true});
     });
 
     p1.once('ready', done);
@@ -133,6 +142,16 @@ describe('Synapsis', function() {
     });
   });
 
+  it('should p1 broadcast to p2 and p3 with no data', function(done) {
+    var plan = new Plan(2, done);
+
+    p2.broadcast('getInfoNoParam', function(err, data) {
+      assert.equal(err, null);
+      assert.deepEqual(data, {success:true});
+      plan.ok(true);
+    });
+  });
+
   it('should get socket list', function() {
     assert.equal(p1.getPeers().length, 2);
   });
@@ -141,6 +160,17 @@ describe('Synapsis', function() {
     var id = p1.getPeers()[0].id;
 
     p1.send(id, 'getInfo', {data : true}, function(err, data) {
+      assert.equal(err, null);
+      done();
+    });
+  });
+
+  it('should send command to a function with no data', function(done) {
+    var id = p1.getPeers()[0].id;
+
+    p1.send(id, 'getInfoNoParam', function(err, data) {
+      assert.equal(err, null);
+      assert.deepEqual(data, {success:true});
       done();
     });
   });

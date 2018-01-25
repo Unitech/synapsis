@@ -181,6 +181,11 @@ SocketPool.prototype.getAll = function() {
 };
 
 SocketPool.prototype.sendToId = function(id, route, data, cb) {
+  if (typeof(data) == 'function') {
+    cb = data;
+    data = null;
+  }
+
   if (data)
     return this._socket_pool[id].send(route, data, (err, data) => {
       return cb(err, data, this._socket_pool[id].identity);
@@ -192,6 +197,11 @@ SocketPool.prototype.sendToId = function(id, route, data, cb) {
 };
 
 SocketPool.prototype.broadcast = function(route, data, cb) {
+  if (typeof(data) == 'function') {
+    cb = data;
+    data = null;
+  }
+
   if (!cb) cb = function() {};
 
   this.getAll().forEach((router) => {
@@ -201,7 +211,7 @@ SocketPool.prototype.broadcast = function(route, data, cb) {
       });
 
     router.send(route, function(err, data) {
-      return cb(err, data, router.identity);
+      cb(err, data, router.identity);
     });
   });
 };

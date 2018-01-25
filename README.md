@@ -69,6 +69,14 @@ Or send to a specific peer:
 var peer = synapse.getPeers()[0];
 
 synapse.send(peer.id, 'command:restart');
+
+synapse.send(peer.id, 'command:restart', function(err, data, identity) {
+  console.log(err, data, identity);
+});
+
+synapse.send(peer.id, 'command:restart', {mu : { db : true} }, function(err, data, identity) {
+  console.log(err, data, identity);
+});
 ```
 
 ### Event Handling
