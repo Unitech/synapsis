@@ -188,11 +188,11 @@ SocketPool.prototype.sendToId = function(id, route, data, cb) {
 
   if (data)
     return this._socket_pool[id].send(route, data, (err, data) => {
-      return cb(err, data, this._socket_pool[id].identity);
+      return cb(err, data, this._socket_pool[id]);
     });
 
   return this._socket_pool[id].send(route, (err, data) => {
-    return cb(err, data, this._socket_pool[id].identity);
+    return cb(err, data, this._socket_pool[id]);
   });
 };
 
@@ -207,11 +207,11 @@ SocketPool.prototype.broadcast = function(route, data, cb) {
   this.getAll().forEach((router) => {
     if (data)
       return router.send(route, data, function(err, data) {
-        cb(err, data, router.identity);
+        cb(err, data, router);
       });
 
     router.send(route, function(err, data) {
-      cb(err, data, router.identity);
+      cb(err, data, router);
     });
   });
 };

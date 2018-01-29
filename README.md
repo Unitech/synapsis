@@ -58,8 +58,8 @@ synapse.broadcast('command:restart');
 synapse.broadcast('command:restart', { some : 'data' });
 
 // Broadcast a message to all nodes (w/o current) and receive messages from each (RPC like)
-synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, response, identity) {
-  console.log(`Err= ${err} Response = ${response} from = ${identity.name}`);
+synapse.broadcast('command:sync_db', { my : { db : true } }, function(err, response, socket) {
+  console.log(`Err= ${err} Response = ${response} from = ${socket.identity.name}`);
 });
 ```
 
@@ -70,12 +70,12 @@ var peer = synapse.getPeers()[0];
 
 synapse.send(peer.id, 'command:restart');
 
-synapse.send(peer.id, 'command:restart', function(err, data, identity) {
-  console.log(err, data, identity);
+synapse.send(peer.id, 'command:restart', function(err, data, socket) {
+  console.log(err, data, socket.identity);
 });
 
-synapse.send(peer.id, 'command:restart', {mu : { db : true} }, function(err, data, identity) {
-  console.log(err, data, identity);
+synapse.send(peer.id, 'command:restart', {mu : { db : true} }, function(err, data, socket) {
+  console.log(err, data, socket.identity);
 });
 ```
 
