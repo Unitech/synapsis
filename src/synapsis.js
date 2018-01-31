@@ -16,17 +16,6 @@ class Synapsis extends EventEmitter {
     this._routes_v2 = {};
 
     this.socket_pool = new SocketPool();
-
-    this.command_swarm = Swarm({
-      dns : {
-        server : [
-          'discovery1.publicbits.org',
-          'discovery2.publicbits.org'
-        ],
-        interval : 1000
-      },
-      dht : false
-    });
   }
 
   /**
@@ -42,12 +31,25 @@ class Synapsis extends EventEmitter {
     });
   }
 
-  stop() {
-    this.command_swarm.close();
+  stop(cb) {
     this.socket_pool.close();
+    this.command_swarm.leave(this.namespace.toString('hex'));
+    this.command_swarm.close(cb);
   }
 
   start() {
+    this.command_swarm = Swarm({
+      dns : {
+        server : [
+          'discovery1.publicbits.org',
+          'discovery2.publicbits.org'
+        ],
+        interval : 1000
+      },
+      dht : false,
+      utp : false
+    });
+
     this.command_swarm.listen(0);
     this.command_swarm.join(this.namespace.toString('hex'));
 
