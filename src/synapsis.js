@@ -13,6 +13,18 @@ class Synapsis extends EventEmitter {
     this.identity = opts.identity;
     this.routes = opts.routes;
 
+    this.config_swarm = Object.assign({
+      dns: {
+        server: [
+          'discovery1.publicbits.org',
+          'discovery2.publicbits.org'
+        ],
+        interval: 1000
+      },
+      dht: false,
+      utp: false
+    }, opts.swarm)
+
     this._routes_v2 = {};
 
     this.socket_pool = new SocketPool();
@@ -38,17 +50,7 @@ class Synapsis extends EventEmitter {
   }
 
   start() {
-    this.command_swarm = Swarm({
-      dns : {
-        server : [
-          'discovery1.publicbits.org',
-          'discovery2.publicbits.org'
-        ],
-        interval : 1000
-      },
-      dht : false,
-      utp : false
-    });
+    this.command_swarm = Swarm(this.config_swarm);
 
     this.command_swarm.listen(0);
     this.command_swarm.join(this.namespace.toString('hex'));
