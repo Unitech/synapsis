@@ -1,6 +1,6 @@
 {
   "name": "synapsis",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Automatic pub/sub over every possible network. It just works.",
   "main": "index.js",
   "scripts": {
